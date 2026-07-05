@@ -28,7 +28,7 @@ const columnVariants: Variants = {
 
 const Footer = () => {
   return (
-    <footer className="mt-10 bg-white px-4 pb-8 pt-16 sm:px-8 lg:px-12">
+    <footer className="mt-0 bg-white px-4 pb-8 pt-8 sm:px-8 lg:px-12">
       <motion.div
         variants={containerVariants}
         initial="hidden"

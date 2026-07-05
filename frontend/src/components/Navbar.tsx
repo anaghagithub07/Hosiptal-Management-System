@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
+import { useAuth } from '../context/AuthContext'
+import { useScrollPast } from '../hooks/useScrollPast'
+import ProfileMenu from './ProfileMenu'
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -11,39 +14,49 @@ const navLinks = [
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolledPastHero, setScrolledPastHero] = useState(false)
   const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { user, requireAuth } = useAuth()
   const isHome = pathname === '/'
+  const scrolledPastHero = useScrollPast(0.75, isHome)
   const useDarkText = !isHome || scrolledPastHero
 
   useEffect(() => {
     setMenuOpen(false)
+  }, [pathname])
 
-    if (!isHome) {
-      setScrolledPastHero(false)
-      return
-    }
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false)
+  }, [])
 
-    const handleScroll = () => {
-      setScrolledPastHero(window.scrollY > window.innerHeight * 0.75)
-    }
+  const toggleMenu = useCallback(() => {
+    setMenuOpen((open) => !open)
+  }, [])
 
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [isHome])
+  const handleMakeAppointment = useCallback(() => {
+    closeMenu()
+    requireAuth(() => navigate('/doctors'))
+  }, [closeMenu, navigate, requireAuth])
 
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `text-sm font-medium transition-colors duration-300 ${
-      useDarkText
-        ? isActive
-          ? 'text-black'
-          : 'text-gray-800 hover:text-black'
-        : isActive
-          ? 'text-white'
-          : 'text-white/80 hover:text-white'
-    }`
+  const linkClass = useCallback(
+    ({ isActive }: { isActive: boolean }) =>
+      `text-sm font-medium transition-colors duration-300 ${
+        useDarkText
+          ? isActive
+            ? 'text-black'
+            : 'text-gray-800 hover:text-black'
+          : isActive
+            ? 'text-white'
+            : 'text-white/80 hover:text-white'
+      }`,
+    [useDarkText]
+  )
 
+  const appointmentButtonClass = `rounded-full border px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+    useDarkText
+      ? 'border-black text-black hover:bg-black hover:text-white'
+      : 'border-white text-white hover:bg-white hover:text-gray-900'
+  }`
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -51,7 +64,7 @@ const Navbar = () => {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-8 lg:px-12">
-        <Link to="/" className="flex items-center gap-2">
+        <NavLink to="/" className="flex items-center gap-2">
           <img src={assets.logo} alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
           <span
             className={`text-lg font-bold tracking-wide transition-colors duration-300 sm:text-xl ${
@@ -60,40 +73,40 @@ const Navbar = () => {
           >
             HOSPITAL
           </span>
-        </Link>
+        </NavLink>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-4 md:flex lg:gap-6">
           {navLinks.map((link) => (
             <NavLink key={link.path} to={link.path} className={linkClass}>
               {link.label}
             </NavLink>
           ))}
-          <Link
-            to="/doctors"
-            className={`rounded-full border px-5 py-2 text-sm font-medium transition-colors duration-300 ${
-              useDarkText
-                ? 'border-black text-black hover:bg-black hover:text-white'
-                : 'border-white text-white hover:bg-white hover:text-gray-900'
-            }`}
+          <button
+            type="button"
+            onClick={handleMakeAppointment}
+            className={appointmentButtonClass}
           >
             Make an Appointment
-          </Link>
+          </button>
+          {user && <ProfileMenu useDarkText={useDarkText} />}
         </div>
 
-        <button
-          type="button"
-          className="md:hidden"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label="Toggle menu"
-        >
-          <img
-            src={menuOpen ? assets.cross_icon : assets.menu_icon}
-            alt=""
-            className={`h-6 w-6 transition-all duration-300 ${
-              !useDarkText && !menuOpen ? 'invert' : ''
-            }`}
-          />
-        </button>
+        <div className="flex items-center gap-3 md:hidden">
+          {user && <ProfileMenu useDarkText={useDarkText} onNavigate={closeMenu} />}
+          <button
+            type="button"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <img
+              src={menuOpen ? assets.cross_icon : assets.menu_icon}
+              alt=""
+              className={`h-6 w-6 transition-all duration-300 ${
+                !useDarkText && !menuOpen ? 'invert' : ''
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -110,22 +123,18 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={linkClass}
-                onClick={() => setMenuOpen(false)}
+                onClick={closeMenu}
               >
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to="/doctors"
-              className={`rounded-full border px-5 py-2 text-center text-sm font-medium transition-colors duration-300 ${
-                useDarkText
-                  ? 'border-black text-black'
-                  : 'border-white text-white'
-              }`}
-              onClick={() => setMenuOpen(false)}
+            <button
+              type="button"
+              onClick={handleMakeAppointment}
+              className={`${appointmentButtonClass} text-center`}
             >
               Make an Appointment
-            </Link>
+            </button>
           </div>
         </div>
       )}

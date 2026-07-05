@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
+import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
 import { doctors } from '../assets/assets'
-
+import { useAuth } from '../context/AuthContext'
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -20,9 +21,17 @@ const cardVariants: Variants = {
 }
 
 const TopDoctors = () => {
+  const navigate = useNavigate()
+  const { requireAuth } = useAuth()
+  const handleDoctorClick = useCallback(
+    (docId: string) => {
+      requireAuth(() => navigate(`/appointment/${docId}`))
+    },
+    [navigate, requireAuth]
+  )
+
   return (
-    <section className="bg-white px-4 pb-24 pt-4 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-6xl">
+    <section className="scroll-mt-24 bg-white px-4 pb-10 pt-4 sm:px-8 lg:px-12">      <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -47,9 +56,10 @@ const TopDoctors = () => {
         >
           {doctors.map((doctor) => (
             <motion.div key={doctor._id} variants={cardVariants}>
-              <Link
-                to={`/appointment/${doctor._id}`}
-                className="group block overflow-hidden rounded-xl border border-gray-200 bg-white transition-shadow duration-300 hover:shadow-lg"
+              <button
+                type="button"
+                onClick={() => handleDoctorClick(doctor._id)}
+                className="group block w-full overflow-hidden rounded-xl border border-gray-200 bg-white text-left transition-shadow duration-300 hover:shadow-lg"
               >
                 <motion.div
                   whileHover={{ scale: 1.03 }}
@@ -77,7 +87,7 @@ const TopDoctors = () => {
                     {doctor.speciality}
                   </p>
                 </div>
-              </Link>
+              </button>
             </motion.div>
           ))}
         </motion.div>
