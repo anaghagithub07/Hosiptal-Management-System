@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
-import { getInitialLetter } from '../context/authStorage'
+import { useAuth } from '../hooks/useAuth'
+import { getInitialLetter, getUserImage } from '../utils/doctorImage'
 
 interface ProfileMenuProps {
   useDarkText: boolean
@@ -44,19 +44,27 @@ const ProfileMenu = ({ useDarkText, onNavigate }: ProfileMenuProps) => {
 
   if (!user) return null
 
+  const profileImage = getUserImage(user.image)
+
   return (
     <div ref={menuRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-          useDarkText
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'bg-white text-blue-600 hover:bg-blue-50'
+        className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full text-sm font-bold transition-colors ${
+          profileImage
+            ? ''
+            : useDarkText
+              ? 'bg-blue-500 text-white hover:bg-blue-600'
+              : 'bg-white text-blue-600 hover:bg-blue-50'
         }`}
         aria-label="Profile menu"
       >
-        {getInitialLetter(user.name)}
+        {profileImage ? (
+          <img src={profileImage} alt={user.name} className="h-full w-full object-cover" />
+        ) : (
+          getInitialLetter(user.name)
+        )}
       </button>
 
       <AnimatePresence>

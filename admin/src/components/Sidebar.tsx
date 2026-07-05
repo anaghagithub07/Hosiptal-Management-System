@@ -20,7 +20,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'border border-gray-200 bg-gray-50 text-gray-900'
+                  ? 'bg-gray-50 text-gray-900'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`
             }

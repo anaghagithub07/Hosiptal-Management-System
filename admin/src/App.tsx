@@ -1,65 +1,48 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
-import {
-  doctors as initialDoctors,
-  initialAppointments,
-  patientCount,
-  type Appointment,
-  type Doctor,
-} from './data/mockData'
 import AddDoctor from './pages/AddDoctor'
 import Appointments from './pages/Appointments'
 import Dashboard from './pages/Dashboard'
 import DoctorsList from './pages/DoctorsList'
 import Login from './pages/Login'
-import doc1 from './assets/doc1.png'
+import { useAppDispatch, useAppSelector } from './store/hooks'
+import { fetchAdminData } from './store/actions/adminActions'
 
-const App = () => {
-  const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors)
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments)
+const AdminRoutes = () => {
+  const dispatch = useAppDispatch()
+  const { stats, doctors, appointments, latestAppointments, loading } = useAppSelector(
+    (state) => state.admin
+  )
 
-  const cancelAppointment = (id: string) => {
-    setAppointments((prev) => prev.filter((item) => item.id !== id))
-  }
+  useEffect(() => {
+    dispatch(fetchAdminData())
+  }, [dispatch])
 
-  const addDoctor = (doctor: Doctor) => {
-    setDoctors((prev) => [...prev, { ...doctor, image: doctor.image || doc1 }])
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center text-gray-500">Loading...</div>
   }
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route element={<ProtectedRoute />}>
-        <Route element={<Layout />}>
-          <Route
-            index
-            element={
-              <Dashboard
-                doctorCount={doctors.length}
-                appointmentCount={appointments.length}
-                patientCount={patientCount}
-                latestAppointments={appointments}
-                onCancelAppointment={cancelAppointment}
-              />
-            }
-          />
-          <Route
-            path="appointments"
-            element={
-              <Appointments
-                appointments={appointments}
-                onCancelAppointment={cancelAppointment}
-              />
-            }
-          />
-          <Route path="add-doctor" element={<AddDoctor onAddDoctor={addDoctor} />} />
-          <Route path="doctors-list" element={<DoctorsList doctors={doctors} />} />
-        </Route>
+      <Route element={<Layout />}>
+        <Route index element={<Dashboard stats={stats} latestAppointments={latestAppointments} />} />
+        <Route path="appointments" element={<Appointments appointments={appointments} />} />
+        <Route path="add-doctor" element={<AddDoctor />} />
+        <Route path="doctors-list" element={<DoctorsList doctors={doctors} />} />
       </Route>
     </Routes>
   )
 }
+
+const App = () => (
+  <Routes>
+    <Route path="/login" element={<Login />} />
+    <Route element={<ProtectedRoute />}>
+      <Route path="/*" element={<AdminRoutes />} />
+    </Route>
+  </Routes>
+)
 
 export default App

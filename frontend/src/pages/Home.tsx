@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { assets } from '../assets/assets'
 import SpecialitySection from '../components/SpecialitySection'
 import TopDoctors from '../components/TopDoctors'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import { useInterval } from '../hooks/useInterval'
 
 const slides = [
@@ -22,7 +21,6 @@ const slides = [
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const navigate = useNavigate()
   const { requireAuth } = useAuth()
 
   const goToNextSlide = useCallback(() => {
@@ -34,8 +32,8 @@ const Home = () => {
   }, [])
 
   const handleBookAppointment = useCallback(() => {
-    requireAuth(() => navigate('/doctors'))
-  }, [requireAuth, navigate])
+    requireAuth('/doctors')
+  }, [requireAuth])
 
   useInterval(goToNextSlide, 5000)
 

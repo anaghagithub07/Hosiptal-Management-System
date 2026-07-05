@@ -51,10 +51,8 @@ const Footer = () => {
               </span>
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-gray-500">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry&apos;s standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of type
-              and scrambled it to make a type specimen book.
+              Book trusted doctors online, manage appointments, and access quality healthcare
+              from one place. Simple scheduling, secure records, and care you can count on.
             </p>
           </motion.div>
 
@@ -85,18 +83,18 @@ const Footer = () => {
             <ul className="space-y-2.5">
               <motion.li whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
                 <a
-                  href="tel:+12124567890"
+                  href="tel:+919148174362"
                   className="text-sm text-gray-500 transition-colors hover:text-blue-600"
                 >
-                  +1-212-456-7890
+                  +91 9148174362
                 </a>
               </motion.li>
               <motion.li whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
                 <a
-                  href="mailto:greatstackdev@gmail.com"
+                  href="mailto:bhatanagha832@gmail.com"
                   className="text-sm text-gray-500 transition-colors hover:text-blue-600"
                 >
-                  greatstackdev@gmail.com
+                  bhatanagha832@gmail.com
                 </a>
               </motion.li>
             </ul>

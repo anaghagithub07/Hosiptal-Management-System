@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import { useScrollPast } from '../hooks/useScrollPast'
 import ProfileMenu from './ProfileMenu'
 
@@ -15,7 +15,6 @@ const navLinks = [
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
-  const navigate = useNavigate()
   const { user, requireAuth } = useAuth()
   const isHome = pathname === '/'
   const scrolledPastHero = useScrollPast(0.75, isHome)
@@ -35,8 +34,8 @@ const Navbar = () => {
 
   const handleMakeAppointment = useCallback(() => {
     closeMenu()
-    requireAuth(() => navigate('/doctors'))
-  }, [closeMenu, navigate, requireAuth])
+    requireAuth('/doctors')
+  }, [closeMenu, requireAuth])
 
   const linkClass = useCallback(
     ({ isActive }: { isActive: boolean }) =>
@@ -52,10 +51,10 @@ const Navbar = () => {
     [useDarkText]
   )
 
-  const appointmentButtonClass = `rounded-full border px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+  const appointmentButtonClass = `rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
     useDarkText
-      ? 'border-black text-black hover:bg-black hover:text-white'
-      : 'border-white text-white hover:bg-white hover:text-gray-900'
+      ? 'bg-blue-500 text-white hover:bg-blue-600'
+      : 'border border-white/80 text-white hover:bg-white hover:text-gray-900'
   }`
   return (
     <nav

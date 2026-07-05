@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 const SignIn = () => {
-  const { openAuthModal, user } = useAuth()
+  const { user, openAuthModal } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {

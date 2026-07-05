@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 const AuthModal = () => {
   const {

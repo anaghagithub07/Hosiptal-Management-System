@@ -1,13 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useAdminAuth } from '../context/AdminAuthContext'
+import { useAppSelector } from '../store/hooks'
 
 const ProtectedRoute = () => {
-  const { isAuthenticated } = useAdminAuth()
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
+  const isAuthenticated = useAppSelector((state) => state.admin.isAuthenticated)
+  if (!isAuthenticated) return <Navigate to="/login" replace />
   return <Outlet />
 }
 
