@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { assets } from '../assets/assets'
+import SpecialitySection from '../components/SpecialitySection'
+import TopDoctors from '../components/TopDoctors'
 
 const slides = [
   {
@@ -28,6 +30,7 @@ const Home = () => {
   }, [])
 
   return (
+    <>
     <section className="relative min-h-screen overflow-hidden">
       {slides.map((slide, index) => (
         <motion.img
@@ -82,6 +85,9 @@ const Home = () => {
         ))}
       </div>
     </section>
+    <SpecialitySection />
+    <TopDoctors />
+    </>
   )
 }
 

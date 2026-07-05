@@ -8,6 +8,7 @@ import Profile from './pages/Profile'
 import MyAppoitments from './pages/MyAppoitments'
 import Appoitment from './pages/Appoitment'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 const App = () => {
   const { pathname } = useLocation()
@@ -29,6 +30,7 @@ const App = () => {
           <Route path='/appointment/:docId' element={<Appoitment />} />
         </Routes>
       </div>
+      <Footer />
     </>
   )
 }
