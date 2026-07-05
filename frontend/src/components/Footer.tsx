@@ -116,7 +116,10 @@ const Footer = () => {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="text-center text-sm text-gray-500"
         >
-          Copyright © {new Date().getFullYear()} GreatStack — All Rights Reserved.
+          Copyright © {new Date().getFullYear()} Hospital —{' '}
+          <a href="mailto:bhatanagha832@gmail.com" className="hover:text-blue-600">
+            bhatanagha832@gmail.com
+          </a>
         </motion.p>
       </motion.div>
     </footer>
