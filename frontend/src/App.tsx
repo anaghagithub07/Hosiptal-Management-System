@@ -8,15 +8,19 @@ import Profile from './pages/Profile'
 import MyAppoitments from './pages/MyAppoitments'
 import Appoitment from './pages/Appoitment'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import AuthModal from './components/AuthModal'
+import ScrollToTop from './components/ScrollToTop'
 
 const App = () => {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
-
+  const mainClassName = isHome ? '' : 'mx-4 mt-20 sm:mx-[10%]'
   return (
     <>
+      <ScrollToTop />
       <Navbar />
-      <div className={isHome ? '' : 'mx-4 mt-20 sm:mx-[10%]'}>
+      <div className={mainClassName}>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/doctors' element={<Doctors />} />
@@ -29,6 +33,8 @@ const App = () => {
           <Route path='/appointment/:docId' element={<Appoitment />} />
         </Routes>
       </div>
+      <Footer />
+      <AuthModal />
     </>
   )
 }

@@ -1,6 +1,9 @@
-import { useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import { assets } from '../assets/assets'
+import { useAuth } from '../hooks/useAuth'
+import { useScrollPast } from '../hooks/useScrollPast'
+import ProfileMenu from './ProfileMenu'
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -12,73 +15,105 @@ const navLinks = [
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
+  const { user, requireAuth } = useAuth()
   const isHome = pathname === '/'
+  const scrolledPastHero = useScrollPast(0.75, isHome)
+  const useDarkText = !isHome || scrolledPastHero
 
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `text-sm font-medium transition-colors ${
-      isHome
-        ? isActive
-          ? 'text-white'
-          : 'text-white/80 hover:text-white'
-        : isActive
-          ? 'text-blue-600'
-          : 'text-gray-700 hover:text-blue-600'
-    }`
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
 
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false)
+  }, [])
+
+  const toggleMenu = useCallback(() => {
+    setMenuOpen((open) => !open)
+  }, [])
+
+  const handleMakeAppointment = useCallback(() => {
+    closeMenu()
+    requireAuth('/doctors')
+  }, [closeMenu, requireAuth])
+
+  const linkClass = useCallback(
+    ({ isActive }: { isActive: boolean }) =>
+      `text-sm font-medium transition-colors duration-300 ${
+        useDarkText
+          ? isActive
+            ? 'text-black'
+            : 'text-gray-800 hover:text-black'
+          : isActive
+            ? 'text-white'
+            : 'text-white/80 hover:text-white'
+      }`,
+    [useDarkText]
+  )
+
+  const appointmentButtonClass = `rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+    useDarkText
+      ? 'bg-blue-500 text-white hover:bg-blue-600'
+      : 'border border-white/80 text-white hover:bg-white hover:text-gray-900'
+  }`
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
-        isHome ? 'bg-transparent' : 'bg-white shadow-sm'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        useDarkText ? 'bg-white shadow-sm' : 'bg-transparent'
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-8 lg:px-12">
-        <Link to="/" className="flex items-center gap-2">
+        <NavLink to="/" className="flex items-center gap-2">
           <img src={assets.logo} alt="logo" className="h-8 w-8 sm:h-10 sm:w-10" />
           <span
-            className={`text-lg font-bold tracking-wide sm:text-xl ${
-              isHome ? 'text-white' : 'text-gray-900'
+            className={`text-lg font-bold tracking-wide transition-colors duration-300 sm:text-xl ${
+              useDarkText ? 'text-black' : 'text-white'
             }`}
           >
             HOSPITAL
           </span>
-        </Link>
+        </NavLink>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-4 md:flex lg:gap-6">
           {navLinks.map((link) => (
             <NavLink key={link.path} to={link.path} className={linkClass}>
               {link.label}
             </NavLink>
           ))}
-          <Link
-            to="/doctors"
-            className={`rounded-full border px-5 py-2 text-sm font-medium transition-colors ${
-              isHome
-                ? 'border-white text-white hover:bg-white hover:text-gray-900'
-                : 'border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white'
-            }`}
+          <button
+            type="button"
+            onClick={handleMakeAppointment}
+            className={appointmentButtonClass}
           >
             Make an Appointment
-          </Link>
+          </button>
+          {user && <ProfileMenu useDarkText={useDarkText} />}
         </div>
 
-        <button
-          type="button"
-          className="md:hidden"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label="Toggle menu"
-        >
-          <img
-            src={menuOpen ? assets.cross_icon : assets.menu_icon}
-            alt=""
-            className={`h-6 w-6 ${isHome && !menuOpen ? 'invert' : ''}`}
-          />
-        </button>
+        <div className="flex items-center gap-3 md:hidden">
+          {user && <ProfileMenu useDarkText={useDarkText} onNavigate={closeMenu} />}
+          <button
+            type="button"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <img
+              src={menuOpen ? assets.cross_icon : assets.menu_icon}
+              alt=""
+              className={`h-6 w-6 transition-all duration-300 ${
+                !useDarkText && !menuOpen ? 'invert' : ''
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
         <div
-          className={`border-t px-4 py-4 md:hidden ${
-            isHome ? 'border-white/20 bg-black/80' : 'border-gray-100 bg-white'
+          className={`border-t px-4 py-4 transition-colors duration-300 md:hidden ${
+            useDarkText
+              ? 'border-gray-100 bg-white'
+              : 'border-white/20 bg-black/80'
           }`}
         >
           <div className="flex flex-col gap-4">
@@ -87,22 +122,18 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={linkClass}
-                onClick={() => setMenuOpen(false)}
+                onClick={closeMenu}
               >
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to="/doctors"
-              className={`rounded-full border px-5 py-2 text-center text-sm font-medium ${
-                isHome
-                  ? 'border-white text-white'
-                  : 'border-blue-600 text-blue-600'
-              }`}
-              onClick={() => setMenuOpen(false)}
+            <button
+              type="button"
+              onClick={handleMakeAppointment}
+              className={`${appointmentButtonClass} text-center`}
             >
               Make an Appointment
-            </Link>
+            </button>
           </div>
         </div>
       )}
