@@ -4,6 +4,8 @@ import group_profiles from './group_profiles.png'
 import profile_pic from './profile_pic.png'
 import contact_image from './contact_image.png'
 import about_image from './about_image.png'
+import HomePage1 from './HomePage1.jpg'
+import HomePage2 from './HomePage2.jpg'
 import logo from './logo.svg'
 import dropdown_icon from './dropdown_icon.svg'
 import menu_icon from './menu_icon.svg'
@@ -37,8 +39,51 @@ import Gynecologist from './Gynecologist.svg'
 import Neurologist from './Neurologist.svg'
 import Pediatricians from './Pediatricians.svg'
 
+export interface DoctorAddress {
+  line1: string
+  line2: string
+}
 
-export const assets = {
+export interface Doctor {
+  _id: string
+  name: string
+  image: string
+  speciality: string
+  degree: string
+  experience: string
+  about: string
+  fees: number
+  address: DoctorAddress
+}
+
+export interface Speciality {
+  speciality: string
+  image: string
+}
+
+export interface Assets {
+  appointment_img: string
+  header_img: string
+  group_profiles: string
+  logo: string
+  chats_icon: string
+  verified_icon: string
+  info_icon: string
+  profile_pic: string
+  arrow_icon: string
+  contact_image: string
+  about_image: string
+  HomePage1: string
+  HomePage2: string
+  menu_icon: string
+  cross_icon: string
+  dropdown_icon: string
+  upload_icon: string
+  stripe_logo: string
+  razorpay_logo: string
+}
+
+export const assets: Assets = {
     appointment_img,
     header_img,
     group_profiles,
@@ -50,6 +95,8 @@ export const assets = {
     arrow_icon,
     contact_image,
     about_image,
+    HomePage1,
+    HomePage2,
     menu_icon,
     cross_icon,
     dropdown_icon,
@@ -58,7 +105,7 @@ export const assets = {
     razorpay_logo
 }
 
-export const specialityData = [
+export const specialityData: Speciality[] = [
     {
         speciality: 'General physician',
         image: General_physician
@@ -85,7 +132,7 @@ export const specialityData = [
     },
 ]
 
-export const doctors = [
+export const doctors: Doctor[] = [
     {
         _id: 'doc1',
         name: 'Dr. Richard James',
